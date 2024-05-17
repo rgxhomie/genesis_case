@@ -4,6 +4,7 @@ import { EmailModule } from './email/email.module';
 import { ConfigModule } from '@nestjs/config';
 import config from './config/config';
 import { CacheModule } from '@nestjs/cache-manager';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { CacheModule } from '@nestjs/cache-manager';
     CacheModule.register({ isGlobal: true })
   ],
   controllers: [],
-  providers: [],
+  providers: [PrismaService],
 })
 export class AppModule {}

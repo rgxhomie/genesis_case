@@ -16,6 +16,6 @@ datasource db {
 model Emails {
   id            String  @id @default(uuid())
   email         String  @unique
-  is_subscribed Boolean @default(false)
+  is_subscribed Boolean @default(true)
 }
 

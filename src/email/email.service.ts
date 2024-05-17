@@ -1,10 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EmailService {
-    constructor() {}
+    constructor(
+        private prismaService: PrismaService
+    ) {}
 
-    async subscribeEmail(email) {}
+    async trySubscribeEmail(email) {
+        const subscribedEmail = await this.prismaService.emails.findFirst({where: {email}});
 
-    private async checkSubscribtion() {}
+        if (subscribedEmail && subscribedEmail.is_subscribed) throw new ConflictException();
+
+        if (subscribedEmail) await this.prismaService.emails.update({where: {email}, data: {is_subscribed: true}});
+        else await this.prismaService.emails.create({data: {email}});
+
+        return;
+    }
 }
