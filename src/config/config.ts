@@ -1,9 +1,6 @@
 export default () => ({
     api: {
-        exchangerate: {
-            url: "",
-            ratePath: "",
-            key: process.env.EXCHANGERATE_KEY
-        }
+        url: 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json',
+        cachettl: 300000
     }
 });

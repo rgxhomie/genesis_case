@@ -1,20 +1,21 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RateProviders } from './rateProviders.enum';
 import axios from 'axios';
 import * as _ from 'lodash';
 
 @Injectable()
 export class RateService {
     constructor(
-        private configService: ConfigService
+        private configService: ConfigService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
 
     async getCurrentRate(): Promise<Number> {
         const cahedRate = await this.getCachedRate();
         if (cahedRate) return cahedRate;
 
-        const rate = await this.getNewRate(RateProviders.excr);
+        const rate = await this.getNewRate();
 
         this.cacheNewRate(rate);
 
@@ -22,30 +23,26 @@ export class RateService {
     }
 
     private async getCachedRate(): Promise<Number | null> {
-        return null;
+        return await this.cacheManager.get('rate');
     }
 
     private async cacheNewRate(value: Number): Promise<void> {
-        return;
+        const cacheTtl = parseInt(this.configService.getOrThrow('api.cachettl'));
+        
+        return await this.cacheManager.set('rate', value, cacheTtl);
     }
 
-    private async getNewRate(provider: RateProviders): Promise<Number> {
+    private async getNewRate(): Promise<Number> {
         try {
-            const apiUrl = this.configService.getOrThrow(`api.${provider}.url`);
-            const ratePath = this.configService.getOrThrow(`api.${provider}.ratePath`);
-            const apiKey = this.configService.get(`api.${provider}.key`);
+            const apiUrl = this.configService.getOrThrow(`api.url`);
 
-            const data = await axios.get(apiUrl, {
-                headers: {
-                    "Authorization": apiKey ? `Bearer ${apiKey}` : undefined
-                }
-            });
+            const data = await axios.get<Object[]>(apiUrl);
 
-            const rate = _.get(data, ratePath, null);
+            const rate = data.data.find(curr => _.get(curr, 'cc', null) === 'USD');
 
-            if (_.isNil(rate)) throw new Error('Bad response path');
+            if (_.isNil(rate) || _.isEmpty(rate)) throw new Error('Rate was not found');
 
-            return rate;
+            return _.get(rate, 'rate');
         } catch (error) {
             console.log(`RateProvider Error: `, { error });
 
