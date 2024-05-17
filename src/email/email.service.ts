@@ -23,10 +23,11 @@ export class EmailService {
         return;
     }
 
-    @Cron('0 12 * * *')
+    // @Cron('0 12 * * *')
+    @Cron('* * * * *')
     async bulkSend() {
         const toList = await this.prismaService.emails.findMany({where: {is_subscribed: true}});
-        const rate = this.rateService.getCurrentRate();
+        const rate = await this.rateService.getCurrentRate();
 
         toList.forEach(async receiver => {
             await this.mailerService.sendRate(receiver.email, rate);
