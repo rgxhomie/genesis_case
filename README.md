@@ -1,12 +1,12 @@
 # Genesis Academy Case
 
-Welcome to my case application! 
-This project is built using the [Nest.js](https://nestjs.com/) framework for Genesis Academy SE School 4.0.
-Technology stack used in this project are:
-    - Node.js with Nest.js as a backend framework 
-    - Typescript
-    - PostgreSQL
-    - Prisma ORM
+Welcome to my case application! <br />
+This project is built using the [Nest.js](https://nestjs.com/) framework for Genesis Academy SE School 4.0. <br />
+Technology stack used in this project are: <br />
+    - Node.js with Nest.js as a backend framework  <br />
+    - Typescript <br />
+    - PostgreSQL <br />
+    - Prisma ORM <br />
 
 ## Table of Contents
 
@@ -80,7 +80,7 @@ POST /api/subscribe
 }
 ```
 
-### 2. Daily Email Updates
+### 3. Daily Email Updates
 
 A cron job runs every day to send emails to all subscribed users with the latest rate information. This ensures that subscribers are always informed about the current rate.
 
