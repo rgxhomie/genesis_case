@@ -23,8 +23,8 @@ export class EmailService {
         return;
     }
 
-    // @Cron('0 12 * * *')
-    @Cron('* * * * *')
+    @Cron('0 12 * * *')
+    // @Cron('* * * * *') <- every minute for testing
     async bulkSend() {
         const toList = await this.prismaService.emails.findMany({where: {is_subscribed: true}});
         const rate = await this.rateService.getCurrentRate();
