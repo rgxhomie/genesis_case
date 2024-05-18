@@ -19,7 +19,7 @@ Technology stack used in this project are: <br />
 To get started with this project, just clone the repository:
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/rgxhomie/genesis_case.git
 ```
 
 ## Configuration
