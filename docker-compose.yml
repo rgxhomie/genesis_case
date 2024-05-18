@@ -2,8 +2,22 @@ version: '3.9'
 
 services:
 
+  db:
+    image: postgres
+    container_name: genesis_academy_postgres
+    restart: always
+    ports:
+      - 5432:5432
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: genesis_acad_db
+      POSTGRES_USER: genesis_user
+      POSTGRES_PASSWORD: verysecretpass
+
   app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: app
     ports:
       - "3000:3000"
@@ -12,15 +26,5 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-
-  db:
-    image: postgres
-    container_name: genesis_academy_postgres
-    restart: always
-    ports:
-      - 5432:5432
-    shm_size: 128mb # Set shared memory limit. Image docs recomendation - do not remove
-    environment:
-      POSTGRES_DB: genesis_acad_db
-      POSTGRES_USER: genesis_user
-      POSTGRES_PASSWORD: verysecretpass
+    env_file:
+      - .env
